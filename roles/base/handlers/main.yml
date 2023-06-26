@@ -1,0 +1,13 @@
+---
+- name: Restart server
+  ansible.builtin.reboot:
+
+- name: Restart iptables
+  ansible.builtin.systemd:
+    name: netfilter-persistent
+    state: restarted
+
+- name: Restart postfix
+  ansible.builtin.systemd:
+    name: postfix
+    state: restarted

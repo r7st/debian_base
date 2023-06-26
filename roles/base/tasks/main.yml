@@ -1,0 +1,53 @@
+---
+- name: Update packages
+  ansible.builtin.apt:
+    name: "*"
+    update_cache: true
+    state: latest
+  tags: base_update_packages
+
+- name: Check for reboot
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+  notify: Restart server
+
+- name: Remove packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: absent
+    purge: true
+  with_items: "{{ base_remove_packages }}"
+  tags: base_remove_packages
+
+- name: Install packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ base_install_packages }}"
+  tags: base_install_packages
+
+- name: Install iptables rules
+  ansible.builtin.copy:
+    src: "files/iptables/{{ item }}"
+    dest: /etc/iptables/{{ item }}
+    owner: root
+    group: root
+    mode: 0640
+  with_items:
+    - rules.v4
+    - rules.v6
+  notify: Restart iptables
+  tags: base_iptables
+
+- name: Configure postfix
+  ansible.builtin.import_tasks: postfix.yml
+  tags: base_postfix
+
+- name: Enforce apparmpr
+  ansible.builtin.command:
+    cmd: aa-enforce /etc/apparmor.d/*
+  changed_when: false
+  tags: base_apparmor
+
+- name: Flush handlers
+  meta: flush_handlers

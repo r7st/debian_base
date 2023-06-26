@@ -1,0 +1,20 @@
+---
+base_remove_packages:
+  - ufw
+
+base_install_packages:
+  - screen
+  - rsync
+  - aide
+  - auditd
+  - net-tools
+  - iptables-persistent
+  - netfilter-persistent
+  - postfix
+  - bsd-mailx
+  - rng-tools
+  - anacron
+  - apparmor-profiles
+  - apparmor-profiles-extra
+  - apparmor-easyprof
+  - apparmor-utils
