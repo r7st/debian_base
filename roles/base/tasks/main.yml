@@ -26,6 +26,10 @@
   with_items: "{{ base_install_packages }}"
   tags: base_install_packages
 
+- name: Configure cron
+  ansible.builtin.import_tasks: cron.yml
+  tags: base_cron
+
 - name: Install iptables rules
   ansible.builtin.copy:
     src: "files/iptables/{{ item }}"

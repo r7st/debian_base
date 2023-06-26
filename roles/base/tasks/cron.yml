@@ -1,0 +1,24 @@
+- name: Install cron
+  ansible.builtin.apt:
+    name: cron
+    state: present
+
+- name: Start / enable cron
+  ansible.builtin.systemd:
+    name: cron
+    state: started
+    enabled: true
+
+- name: Check for root crontab
+  ansible.builtin.stat:
+    path: /var/spool/cron/crontabs/root
+  register: root_crontab
+
+- name: Create root crontab
+  ansible.builtin.file:
+    path: /var/spool/cron/crontabs/root
+    state: touch
+    owner: root
+    group: root
+    mode: 0600
+  when: not root_crontab.stat.exists
