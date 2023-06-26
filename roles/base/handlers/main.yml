@@ -11,3 +11,8 @@
   ansible.builtin.systemd:
     name: postfix
     state: restarted
+
+- name: Restart auditd
+  ansible.builtin.systemd:
+    name: auditd
+    state: restarted

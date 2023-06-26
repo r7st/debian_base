@@ -1,0 +1,36 @@
+- name: Install auditd
+  ansible.builtin.apt:
+    name: auditd
+    state: present
+
+- name: Start and enable auditd
+  ansible.builtin.systemd:
+    name: auditd
+    state: started
+    enabled: true
+
+- name: Copy audit rules
+  copy:
+    src: files/audit.rules
+    dest: /etc/audit/rules.d/audit.rules
+    owner: root
+    group: root
+    mode: 0600
+  notify: Restart auditd
+
+- name: Remove deprecated parameters
+  lineinfile:
+    path: /etc/audit/auditd.conf
+    state: absent
+    regexp: '{{ item }}'
+  loop:
+    - '^disp_qos'
+    - '^dispatcher'
+  notify: Restart auditd
+
+- name: Set audit log rotation
+  lineinfile:
+    path: /etc/audit/auditd.conf
+    regexp: '^max_log_file_action'
+    line: 'max_log_file_action = rotate'
+  notify: Restart auditd

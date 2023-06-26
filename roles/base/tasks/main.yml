@@ -43,6 +43,10 @@
   notify: Restart iptables
   tags: base_iptables
 
+- name: Configure auditd
+  ansible.builtin.import_tasks: auditd.yml
+  tags: base_auditd
+
 - name: Configure postfix
   ansible.builtin.import_tasks: postfix.yml
   tags: base_postfix
