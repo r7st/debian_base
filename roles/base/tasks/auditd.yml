@@ -9,6 +9,13 @@
     state: started
     enabled: true
 
+- name: Stop and mask journald-audit
+  ansible.builtin.systemd:
+    name: systemd-journald-audit.socket
+    state: stopped
+    masked: true
+  notify: Restart journald
+
 - name: Copy audit rules
   copy:
     src: files/audit.rules
