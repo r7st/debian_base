@@ -1,2 +1,4 @@
 devsec_os_harden: false
 devsec_ssh_harden: false
+base_freshclam_daemon: false
+base_clamav_daemon: false

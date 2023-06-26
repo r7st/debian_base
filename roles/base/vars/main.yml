@@ -19,3 +19,5 @@ base_install_packages:
   - apparmor-profiles-extra
   - apparmor-easyprof
   - apparmor-utils
+  - clamav
+  - clamav-daemon

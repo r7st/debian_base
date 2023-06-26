@@ -43,6 +43,10 @@
   ansible.builtin.import_tasks: postfix.yml
   tags: base_postfix
 
+- name: Configure clamav
+  ansible.builtin.import_tasks: clamav.yml
+  tags: base_clamav
+
 - name: Enforce apparmpr
   ansible.builtin.command:
     cmd: aa-enforce /etc/apparmor.d/*

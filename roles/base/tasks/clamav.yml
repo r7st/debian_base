@@ -1,0 +1,56 @@
+- name: Clamav asserts
+  ansible.builtin.assert:
+    that:
+      - base_freshclam_daemon is defined
+      - base_freshclam_daemon is boolean
+      - base_clamav_daemon is defined
+      - base_clamav_daemon is boolean
+
+- name: Install clamav
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - clamav
+    - clamav-daemon
+
+- name: Update clamav databases
+  ansible.builtin.command:
+    cmd: /usr/bin/freshclam
+  changed_when: false
+
+- name: Disable freshclam daemon
+  ansible.builtin.systemd:
+    name: clamav-freshclam
+    state: stopped
+    enabled: false
+  when: not base_freshclam_daemon
+
+- name: Disable clamd daemon
+  ansible.builtin.systemd:
+    name: clamav-daemon
+    state: stopped
+    enabled: false
+  when: not base_freshclam_daemon
+
+- name: Enable freshclam daemon
+  ansible.builtin.systemd:
+    name: clamav-freshclam
+    state: started
+    enabled: true
+  when: base_freshclam_daemon
+
+- name: Enable_clamd daemon
+  ansible.builtin.systemd:
+    name: clamav-daemon
+    state: started
+    enabled: true 
+  when: base_freshclam_daemon
+
+- name: Add clamscan cronjob
+  ansible.builtin.lineinfile:
+    path: /var/spool/cron/crontabs/root
+    line: "{{ item }}"
+  with_items:
+    - "0 0 * * SUN /usr/bin/freshclam && time nice -n19 /usr/bin/clamscan --exclude=/proc --exclude=/sys -ri /"
+    - "0 0 * * WED /usr/bin/freshclam && time nice -n19 /usr/bin/clamscan --exclude=/proc --exclude=/sys -ri /"
