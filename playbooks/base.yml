@@ -8,6 +8,7 @@
         - os_auth_pw_max_age: 99999
         - os_auth_lockout_time: 300
       when: devsec_os_harden
+      tags: devsec_os_hardening_role
     - role: ssh_hardening
       vars:
         - ssh_permit_root_login: 'without-password'
@@ -15,4 +16,6 @@
         - sftp_enabled: true
         - network_ipv6_enable: false
       when: devsec_ssh_harden
+      tags: devsec_ssh_hardening_role
     - role: base
+      tags: base_role
