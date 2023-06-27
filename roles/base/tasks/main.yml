@@ -1,4 +1,9 @@
 ---
+- name: Check asserts
+  ansible.builtin.assert:
+    that:
+      - base_timezone is defined
+
 - name: Update packages
   ansible.builtin.apt:
     name: "*"
@@ -10,6 +15,12 @@
   ansible.builtin.stat:
     path: /var/run/reboot-required
   notify: Restart server
+
+- name: Set timezone
+  ansible.builtin.command:
+    cmd: "timedatectl set-timezone {{ base_timezone }}"
+  changed_when: false
+  tags: base_timezone
 
 - name: Remove packages
   ansible.builtin.apt:
