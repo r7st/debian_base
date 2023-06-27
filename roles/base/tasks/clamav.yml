@@ -52,5 +52,5 @@
     path: /var/spool/cron/crontabs/root
     line: "{{ item }}"
   with_items:
-    - "0 0 * * SUN /usr/bin/freshclam && time nice -n19 /usr/bin/clamscan --exclude=/proc --exclude=/sys -ri /"
-    - "0 0 * * WED /usr/bin/freshclam && time nice -n19 /usr/bin/clamscan --exclude=/proc --exclude=/sys -ri /"
+    - "0 0 * * SUN /usr/bin/freshclam && /usr/bin/time nice -n19 /usr/bin/clamscan --exclude=/proc --exclude=/sys -ri /"
+    - "0 0 * * WED /usr/bin/freshclam && /usr/bin/time nice -n19 /usr/bin/clamscan --exclude=/proc --exclude=/sys -ri /"

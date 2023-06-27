@@ -21,3 +21,4 @@ base_install_packages:
   - apparmor-utils
   - clamav
   - clamav-daemon
+  - time
