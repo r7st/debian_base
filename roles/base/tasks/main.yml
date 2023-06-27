@@ -51,7 +51,7 @@
     dest: /etc/iptables/{{ item }}
     owner: root
     group: root
-    mode: 0640
+    mode: "0640"
   with_items:
     - rules.v4
     - rules.v6
@@ -81,4 +81,4 @@
   tags: base_disable_coredump
 
 - name: Flush handlers
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers

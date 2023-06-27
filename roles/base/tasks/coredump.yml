@@ -23,7 +23,7 @@
     path: /etc/systemd/coredump.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
     state: touch
   when: (not coredump_conf.stat.exists) or (coredump_sec.changed)
 
@@ -31,18 +31,18 @@
   ansible.builtin.lineinfile:
     path: /etc/systemd/coredump.conf
     line: "[Coredump]"
-  notify: Reboot server 
+  notify: Reboot server
 
 - name: Disable coredump backtraces
   ansible.builtin.lineinfile:
     path: /etc/systemd/coredump.conf
     line: "ProcessSizeMax=0"
     insertafter: "^[Coredump]"
-  notify: Reboot server 
+  notify: Reboot server
 
 - name: Disable coredump storage
   ansible.builtin.lineinfile:
     path: /etc/systemd/coredump.conf
     line: "Storage=none"
     insertafter: "^ProcessSizeMax"
-  notify: Reboot server 
+  notify: Reboot server

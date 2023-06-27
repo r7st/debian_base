@@ -44,7 +44,7 @@
   ansible.builtin.systemd:
     name: clamav-daemon
     state: started
-    enabled: true 
+    enabled: true
   when: base_freshclam_daemon
 
 - name: Add clamscan cronjob
