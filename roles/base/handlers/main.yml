@@ -21,3 +21,8 @@
   ansible.builtin.systemd:
     name: systemd-journald
     state: restarted
+
+- name: Restart chronyd
+  ansible.builtin.systemd:
+    name: chrony
+    state: restarted

@@ -15,6 +15,12 @@
     state: stopped
     masked: true
 
+- name: No chrony udp listener
+  ansible.builtin.lineinfile:
+    path: /etc/chrony/chrony.conf
+    line: "cmdport 0"
+  notify: Restart chronyd
+
 - name: Start and enable chrony
   ansible.builtin.systemd:
     name: chrony
