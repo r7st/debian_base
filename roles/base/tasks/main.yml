@@ -61,5 +61,9 @@
   changed_when: false
   tags: base_apparmor
 
+- name: Disable coredumps
+  ansible.builtin.import_tasks: coredump.yml
+  tags: base_disable_coredump
+
 - name: Flush handlers
   meta: flush_handlers

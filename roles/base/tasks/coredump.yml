@@ -1,0 +1,48 @@
+- name: Ensure coredump.conf exists
+  ansible.builtin.stat:
+    path: /etc/systemd/coredump.conf
+  register: coredump_conf
+
+- name: Check coredump.conf for [Coredump] section
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/coredump.conf
+    line: "[Coredump]"
+    state: present
+  check_mode: true
+  register: coredump_sec
+  when: coredump_conf.stat.exists
+
+- name: Remove coredump.conf if no [Coredump] section
+  ansible.builtin.file:
+    path: /etc/systemd/coredump.conf
+    state: absent
+  when: (coredump_conf.stat.exists) and (coredump_sec.changed)
+
+- name: Create coredump.conf
+  ansible.builtin.file:
+    path: /etc/systemd/coredump.conf
+    owner: root
+    group: root
+    mode: 0644
+    state: touch
+  when: (not coredump_conf.stat.exists) or (coredump_sec.changed)
+
+- name: Ensure [Coredump] section exists
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/coredump.conf
+    line: "[Coredump]"
+  notify: Reboot server 
+
+- name: Disable coredump backtraces
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/coredump.conf
+    line: "ProcessSizeMax=0"
+    insertafter: "^[Coredump]"
+  notify: Reboot server 
+
+- name: Disable coredump storage
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/coredump.conf
+    line: "Storage=none"
+    insertafter: "^ProcessSizeMax"
+  notify: Reboot server 
