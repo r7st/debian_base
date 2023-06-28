@@ -1,8 +1,11 @@
-- name: Install postfix
+- name: Install postfix and mailx
   ansible.builtin.apt:
-    name: postfix
+    name: "{{ item }}"
     state: present
     update_cache: true
+  with_items:
+    - postfix
+    - bsd-mailx
 
 - name: Start/enable postfix
   ansible.builtin.systemd:
