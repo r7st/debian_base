@@ -14,18 +14,15 @@
   with_items:
     - clamav
     - clamav-daemon
-
-- name: Update clamav databases
-  ansible.builtin.command:
-    cmd: /usr/bin/freshclam
-  changed_when: false
+  register: installed_clamav
 
 - name: Disable freshclam daemon
   ansible.builtin.systemd:
     name: clamav-freshclam
     state: stopped
     enabled: false
-  when: not base_freshclam_daemon
+  register: disabled_freshclam
+  when: not base_freshclam_daemon and installed_clamav.changed
 
 - name: Disable clamd daemon
   ansible.builtin.systemd:
@@ -47,6 +44,18 @@
     state: started
     enabled: true
   when: base_freshclam_daemon
+
+- name: Kill freshclam if running
+  ansible.builtin.shell:
+    cmd: (pkill freshclam) || true
+  changed_when: true
+  when: disabled_freshclam.changed
+
+- name: Update clamav databases
+  ansible.builtin.command:
+    cmd: /usr/bin/freshclam
+  changed_when: true
+  when: installed_clamav.changed
 
 - name: Add clamscan cronjob
   ansible.builtin.lineinfile:
