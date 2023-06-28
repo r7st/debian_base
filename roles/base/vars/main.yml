@@ -22,3 +22,6 @@ base_install_packages:
   - clamav
   - clamav-daemon
   - time
+  - at
+  - nvi
+  - joe
