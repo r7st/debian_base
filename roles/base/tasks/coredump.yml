@@ -31,18 +31,18 @@
   ansible.builtin.lineinfile:
     path: /etc/systemd/coredump.conf
     line: "[Coredump]"
-  notify: Reboot server
+  notify: Restart server
 
 - name: Disable coredump backtraces
   ansible.builtin.lineinfile:
     path: /etc/systemd/coredump.conf
     line: "ProcessSizeMax=0"
     insertafter: "^[Coredump]"
-  notify: Reboot server
+  notify: Restart server
 
 - name: Disable coredump storage
   ansible.builtin.lineinfile:
     path: /etc/systemd/coredump.conf
     line: "Storage=none"
     insertafter: "^ProcessSizeMax"
-  notify: Reboot server
+  notify: Restart server
