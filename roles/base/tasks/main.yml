@@ -89,6 +89,10 @@
   ansible.builtin.import_tasks: fail2ban.yml
   tags: base_fail2ban
 
+- name: Configure aide
+  ansible.builtin.import_tasks: aide.yml
+  tags: base_aide
+
 - name: Enforce apparmpr
   ansible.builtin.command:
     cmd: aa-enforce /etc/apparmor.d/*

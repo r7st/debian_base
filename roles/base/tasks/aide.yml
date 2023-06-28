@@ -1,0 +1,40 @@
+
+- name: Install aide
+  ansible.builtin.apt:
+    name: aide
+    state: present
+    update_cache: true
+
+- name: Check for db
+  ansible.builtin.stat:
+    path: /var/lib/aide/aide.db
+  register: aide_db
+
+- name: Initialize aide db
+  ansible.builtin.command:
+    cmd: aideinit -y
+  changed_when: true
+  when: not aide_db.stat.exists
+
+- name: Check for aide daily cron job
+  ansible.builtin.stat:
+    path: /etc/cron.daily/aide
+  register: aide_daily
+
+- name: Reschedule aide daily to weekly
+  ansible.builtin.command:
+    cmd: mv /etc/cron.daily/aide /etc/cron.weekly
+  changed_when: true
+  when: aide_daily.stat.exists
+
+- name: Update db with aide cronjob
+  ansible.builtin.replace:
+    path: /etc/cron.weekly/aide
+    regexp: '^COMMAND=.*check.*'
+    replace: COMMAND="${COMMAND:-update}"
+
+- name: Copy new db with aide cronjob
+  ansible.builtin.replace:
+    path: /etc/cron.weekly/aide
+    regexp: '^COPYNEWDB=.*no.*"'
+    replace: COPYNEWDB="${COPYNEWDB:-yes}"
