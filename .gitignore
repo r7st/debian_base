@@ -1,1 +1,3 @@
 inventory.yml
+host_vars
+group_vars
