@@ -1,6 +1,5 @@
 ---
 base_remove_packages:
-  - ufw
 
 base_install_packages:
   - screen
@@ -9,8 +8,6 @@ base_install_packages:
   - aide
   - auditd
   - net-tools
-  - iptables-persistent
-  - netfilter-persistent
   - postfix
   - bsd-mailx
   - rng-tools

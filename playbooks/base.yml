@@ -19,3 +19,6 @@
       tags: devsec_ssh_hardening_role
     - role: base
       tags: base_role
+    - role: iptables
+      tags: iptables
+      tags: iptables_role

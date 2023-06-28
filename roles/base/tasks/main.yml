@@ -60,19 +60,6 @@
   ansible.builtin.import_tasks: cron.yml
   tags: base_cron
 
-- name: Install iptables rules
-  ansible.builtin.copy:
-    src: "files/iptables/{{ item }}"
-    dest: /etc/iptables/{{ item }}
-    owner: root
-    group: root
-    mode: "0640"
-  with_items:
-    - rules.v4
-    - rules.v6
-  notify: Restart iptables
-  tags: base_iptables
-
 - name: Configure auditd
   ansible.builtin.import_tasks: auditd.yml
   tags: base_auditd

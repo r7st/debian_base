@@ -1,0 +1,5 @@
+---
+- name: Restart iptables
+  ansible.builtin.systemd:
+    name: netfilter-persistent
+    state: restarted

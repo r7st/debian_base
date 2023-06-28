@@ -1,0 +1,30 @@
+---
+- name: Remove packages
+  ansible.builtin.apt:
+    name: ufw
+    state: absent
+    purge: true
+  tags: iptables_remove_ufw
+
+- name: Install packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items:
+    - iptables-persistent
+    - netfilter-persistent
+  tags: iptables_install_iptables
+
+- name: Install iptables rules
+  ansible.builtin.copy:
+    src: "files/{{ item }}"
+    dest: /etc/iptables/{{ item }}
+    owner: root
+    group: root
+    mode: "0640"
+  with_items:
+    - rules.v4
+    - rules.v6
+  notify: Restart iptables
+  tags: iptables_configuration
