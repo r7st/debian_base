@@ -16,6 +16,10 @@
     path: /var/run/reboot-required
   notify: Restart server
 
+- name: Configure unattended upgrades
+  ansible.builtin.import_tasks: unattended_upgrades.yml
+  tags: base_unattended_upgrades
+
 - name: Fstab /tmp and /var/tmp
   ansible.builtin.lineinfile:
     path: /etc/fstab
