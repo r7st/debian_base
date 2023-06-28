@@ -1,2 +1,0 @@
-- import_playbook: playbooks/devsec_hardening.yml
-- import_playbook: playbooks/base.yml
