@@ -2,6 +2,7 @@
   ansible.builtin.apt:
     name: auditd
     state: present
+    update_cache: true
 
 - name: Start and enable auditd
   ansible.builtin.systemd:

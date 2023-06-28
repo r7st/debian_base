@@ -2,6 +2,7 @@
   ansible.builtin.apt:
     name: postfix
     state: present
+    update_cache: true
 
 - name: Start/enable postfix
   ansible.builtin.systemd:

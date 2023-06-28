@@ -10,6 +10,7 @@
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
+    update_cache: true
   with_items:
     - clamav
     - clamav-daemon
