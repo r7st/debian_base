@@ -80,6 +80,10 @@
   ansible.builtin.import_tasks: clamav.yml
   tags: base_clamav
 
+- name: Configure fail2ban
+  ansible.builtin.import_tasks: fail2ban.yml
+  tags: base_fail2ban
+
 - name: Enforce apparmpr
   ansible.builtin.command:
     cmd: aa-enforce /etc/apparmor.d/*
