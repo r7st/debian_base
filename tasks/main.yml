@@ -18,6 +18,7 @@
 
 - name: Configure unattended upgrades
   ansible.builtin.import_tasks: unattended_upgrades.yml
+  when: base_unattended_upgrades
   tags: base_unattended_upgrades
 
 - name: Fstab /tmp and /var/tmp
@@ -62,6 +63,7 @@
 
 - name: Configure auditd
   ansible.builtin.import_tasks: auditd.yml
+  when: base_auditd
   tags: base_auditd
 
 - name: Configure postfix
@@ -70,6 +72,7 @@
 
 - name: Configure clamav
   ansible.builtin.import_tasks: clamav.yml
+  when: base_clamav
   tags: base_clamav
 
 - name: Configure fail2ban
@@ -78,6 +81,7 @@
 
 - name: Configure aide
   ansible.builtin.import_tasks: aide.yml
+  when: base_aide
   tags: base_aide
 
 - name: Enforce apparmpr
