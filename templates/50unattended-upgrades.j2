@@ -11,3 +11,8 @@ Unattended-Upgrade::MailReport "on-change";
 Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
 Unattended-Upgrade::Remove-New-Unused-Dependencies "true";
 Unattended-Upgrade::SyslogEnable "true";
+{% if base_unattended_upgrades_reboot %}
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-WithUsers "false";
+Unattended-Upgrade::Automatic-Reboot-Time "02:00";
+{% endif %}

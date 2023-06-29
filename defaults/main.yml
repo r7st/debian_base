@@ -6,6 +6,7 @@ base_fail2ban_sshd_bantime: "1h"
 base_fail2ban_sshd_findtime: "5m"
 base_fail2ban_sshd_maxretry: "5"
 base_unattended_upgrades: true
+base_unattended_upgrades_reboot: false
 base_auditd: true
 base_clamav: true
 base_aide: true

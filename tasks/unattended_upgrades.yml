@@ -11,8 +11,8 @@
     enabled: true
 
 - name: Configure unattended upgrades
-  ansible.builtin.copy:
-    src: files/50unattended-upgrades
+  ansible.builtin.template:
+    src: templates/50unattended-upgrades.j2
     dest: /etc/apt/apt.conf.d/50unattended-upgrades
     owner: root
     group: root
