@@ -32,9 +32,8 @@
   tags: base_fstab
 
 - name: Set timezone
-  ansible.builtin.command:
-    cmd: "timedatectl set-timezone {{ base_timezone }}"
-  changed_when: false
+  community.general.timezone:
+    name: "{{ base_timezone }}"
   tags: base_timezone
 
 - name: Remove packages

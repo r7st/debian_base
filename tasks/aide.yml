@@ -16,16 +16,27 @@
   changed_when: true
   when: not aide_db.stat.exists
 
-- name: Check for aide daily cron job
+- name: Check for weekly cron job
   ansible.builtin.stat:
-    path: /etc/cron.daily/aide
-  register: aide_daily
+    path: /etc/cron.weekly/aide
+  register: aide_weekly
 
-- name: Reschedule aide daily to weekly
-  ansible.builtin.command:
-    cmd: mv /etc/cron.daily/aide /etc/cron.weekly
-  changed_when: true
-  when: aide_daily.stat.exists
+- name: Create weekly cron job
+  when: not aide_weekly.stat.exists
+  block:
+  - name: Check for aide daily cron job
+    ansible.builtin.stat:
+      path: /etc/cron.daily/aide
+    register: aide_daily
+    failed_when: not aide_daily.stat.exists
+
+  - name: Reschedule aide daily to weekly
+    ansible.builtin.command:
+      cmd: mv -v /etc/cron.daily/aide /etc/cron.weekly/aide
+    register: mv_cmd
+    changed_when: "'renamed' in mv_cmd.stdout"
+    failed_when: mv_cmd.rc != 0
+    when: aide_daily.stat.exists
 
 - name: Update db with aide cronjob
   ansible.builtin.replace:
