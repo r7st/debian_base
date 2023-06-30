@@ -1,8 +1,6 @@
 - name: Confirm aide removal
   ansible.builtin.assert:
     that:
-      - base_aide is defined
-      - base_aide is boolean
       - base_aide is false
 
 - name: Purge aide
@@ -11,24 +9,12 @@
     state: absent
     purge: true
 
-- name: Check for log dir
-  ansible.builtin.stat:
-    path: /var/log/aide
-  register: aide_log
-
 - name: Remove logs
   ansible.builtin.file:
     path: /var/log/aide
     state: absent
-  when: aide_log.stat.exists
-
-- name: Check for cron file
-  ansible.builtin.stat:
-    path: /etc/cron.weekly/aide
-  register: aide_cron_file
 
 - name: Remove cron file
   ansible.builtin.file:
     path: /etc/cron.weekly/aide
     state: absent
-  when: aide_cron_file.stat.exists
