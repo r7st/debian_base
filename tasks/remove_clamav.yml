@@ -1,0 +1,42 @@
+- name: Confirm clamav removal
+  ansible.builtin.assert:
+    that:
+      - base_clamav is defined
+      - base_clamav is boolean
+      - base_clamav is false
+
+- name: Purge clamav services
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: absent
+    purge: true
+    autoremove: true
+  with_items:
+    - clamav-freshclam
+    - clamav-daemon
+    - clamav
+    - clamav-base
+    - clamdscan
+
+- name: Check for clamav logs
+  ansible.builtin.stat:
+    path: /var/log/clamav
+  register: clamav_logs
+
+- name: Remove clamav logs
+  ansible.builtin.file:
+    path: /var/log/clamav
+    state: absent
+  when: clamav_logs.stat.exists
+
+- name: Confirm root has crontab
+  ansible.builtin.stat:
+    path: /var/spool/cron/crontabs/root
+  register: root_crontab
+
+- name: Remove clamav cronjob
+  ansible.builtin.lineinfile:
+    path: /var/spool/cron/crontabs/root
+    regexp: "freshclam"
+    state: absent
+  when: root_crontab.stat.exists

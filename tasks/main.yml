@@ -74,6 +74,11 @@
   when: base_clamav
   tags: base_clamav
 
+- name: Remove clamav
+  ansible.builtin.import_tasks: remove_clamav.yml
+  when: not base_clamav
+  tags: base_clamav
+
 - name: Configure fail2ban
   ansible.builtin.import_tasks: fail2ban.yml
   tags: base_fail2ban
@@ -81,6 +86,11 @@
 - name: Configure aide
   ansible.builtin.import_tasks: aide.yml
   when: base_aide
+  tags: base_aide
+
+- name: Remove aide
+  ansible.builtin.import_tasks: remove_aide.yml
+  when: not base_aide
   tags: base_aide
 
 - name: Enforce apparmpr
