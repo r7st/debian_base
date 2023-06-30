@@ -13,16 +13,17 @@
     state: started
     enabled: true
 
-- name: Postfix only on localhost
-  ansible.builtin.lineinfile:
-    path: /etc/postfix/main.cf
-    regexp: "^inet_interfaces = .*"
-    line: "inet_interfaces = loopback-only"
+- name: Configure postfix
   notify: Restart postfix
+  block:
+  - name: Postfix only on localhost
+    ansible.builtin.lineinfile:
+      path: /etc/postfix/main.cf
+      regexp: "^inet_interfaces = .*"
+      line: "inet_interfaces = loopback-only"
 
-- name: Postfix ipv4 only
-  ansible.builtin.lineinfile:
-    path: /etc/postfix/main.cf
-    regexp: "^inet_protocols = .*"
-    line: "inet_protocols = ipv4"
-  notify: Restart postfix
+  - name: Postfix ipv4 only
+    ansible.builtin.lineinfile:
+      path: /etc/postfix/main.cf
+      regexp: "^inet_protocols = .*"
+      line: "inet_protocols = ipv4"
