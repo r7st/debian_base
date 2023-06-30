@@ -1,71 +1,59 @@
 - name: Clamav asserts
   ansible.builtin.assert:
     that:
-      - base_freshclam_daemon is defined
-      - base_freshclam_daemon is boolean
-      - base_clamav_daemon is defined
-      - base_clamav_daemon is boolean
+      - base_clamav is boolean
 
 - name: Install clamav
-  ansible.builtin.apt:
-    name: "{{ item }}"
-    state: present
-    update_cache: true
-  with_items:
-    - clamav
-    - clamav-daemon
-  register: installed_clamav
+  when: base_clamav
+  block:
+  - name: Install clamav package
+    ansible.builtin.apt:
+      name: clamav
+      state: present
+      update_cache: true
+    register: installed_clamav
 
-- name: Disable freshclam daemon
-  ansible.builtin.systemd:
-    name: clamav-freshclam
-    state: stopped
-    enabled: false
-  register: disabled_freshclam
-  when: not base_freshclam_daemon and installed_clamav.changed
+  - name: Start and enable freshclam
+    ansible.builtin.systemd:
+      name: clamav-freshclam
+      state: started
+      enabled: true
 
-- name: Disable clamd daemon
-  ansible.builtin.systemd:
-    name: clamav-daemon
-    state: stopped
-    enabled: false
-  when: not base_freshclam_daemon
+  - name: Add clamscan cronjob
+    ansible.builtin.lineinfile:
+      path: /var/spool/cron/crontabs/root
+      line: "{{ item }}"
+    with_items: "{{ base_clamav_cronjobs }}"
 
-- name: Enable freshclam daemon
-  ansible.builtin.systemd:
-    name: clamav-freshclam
-    state: started
-    enabled: true
-  when: base_freshclam_daemon
+- name: Uninstall clamav
+  when: not base_clamav
+  block:
+  - name: Purge clamav services
+    ansible.builtin.apt:
+      name: "clamav"
+      state: absent
+      purge: true
+      autoremove: true
 
-- name: Enable_clamd daemon
-  ansible.builtin.systemd:
-    name: clamav-daemon
-    state: started
-    enabled: true
-  when: base_freshclam_daemon
+  - name: Check for clamav logs
+    ansible.builtin.stat:
+      path: /var/log/clamav
+    register: clamav_logs
 
-- name: Kill freshclam if running
-  ansible.builtin.shell:
-    cmd: (pkill freshclam) || true
-  changed_when: true
-  when: disabled_freshclam.changed
+  - name: Remove clamav logs
+    ansible.builtin.file:
+      path: /var/log/clamav
+      state: absent
+    when: clamav_logs.stat.exists
 
-- name: Update clamav databases
-  ansible.builtin.command:
-    cmd: /usr/bin/freshclam
-  changed_when: true
-  when: installed_clamav.changed
+  - name: Confirm root has crontab
+    ansible.builtin.stat:
+      path: /var/spool/cron/crontabs/root
+    register: root_crontab
 
-- name: Add clamscan cronjob
-  ansible.builtin.lineinfile:
-    path: /var/spool/cron/crontabs/root
-    line: "{{ item }}"
-  with_items:
-    - "0 0 * * SUN /usr/bin/freshclam && /usr/bin/time nice -n19 /usr/bin/clamscan --exclude=/proc --exclude=/sys -ri /"
-    - "0 0 * * WED /usr/bin/freshclam && /usr/bin/time nice -n19 /usr/bin/clamscan --exclude=/proc --exclude=/sys -ri /"
-
-- name: Clamav user nologin
-  ansible.builtin.command:
-    cmd: usermod -s /usr/sbin/nologin clamav
-  changed_when: false
+  - name: Remove clamav cronjobs
+    ansible.builtin.lineinfile:
+      path: /var/spool/cron/crontabs/root
+      regexp: "clamscan"
+      state: absent
+    when: root_crontab.stat.exists

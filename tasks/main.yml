@@ -71,12 +71,6 @@
 
 - name: Configure clamav
   ansible.builtin.import_tasks: clamav.yml
-  when: base_clamav
-  tags: base_clamav
-
-- name: Remove clamav
-  ansible.builtin.import_tasks: remove_clamav.yml
-  when: not base_clamav
   tags: base_clamav
 
 - name: Configure fail2ban
