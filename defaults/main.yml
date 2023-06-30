@@ -1,7 +1,7 @@
 ---
 base_timezone: "America/New_York"
 
-base_fail2ban: true
+base_fail2ban: false
 base_fail2ban_sshd_bantime: "1h"
 base_fail2ban_sshd_findtime: "5m"
 base_fail2ban_sshd_maxretry: "5"
