@@ -9,12 +9,10 @@
     state: absent
     purge: true
 
-- name: Remove logs
+- name: Remove logs and cron file
   ansible.builtin.file:
-    path: /var/log/aide
+    path: "{{ item }}"
     state: absent
-
-- name: Remove cron file
-  ansible.builtin.file:
-    path: /etc/cron.weekly/aide
-    state: absent
+  with_items:
+    - /var/log/aide
+    - /etc/cron.weekly/aide
