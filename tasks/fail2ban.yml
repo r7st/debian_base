@@ -1,7 +1,6 @@
 - name: Fail2ban asserts
   ansible.builtin.assert:
     that:
-      - base_fail2ban is defined
       - base_fail2ban is boolean
       - base_fail2ban_sshd_bantime is defined
       - base_fail2ban_sshd_findtime is defined
@@ -17,16 +16,10 @@
       purge: true
       autoremove: true
 
-  - name: Check for /etc/fail2ban
-    ansible.builtin.stat:
-      path: /etc/fail2ban
-    register: etc_fail2ban
-
   - name: Remove /etc/fail2ban
     ansible.builtin.file:
       path: /etc/fail2ban
       state: absent
-    when: etc_fail2ban.stat.exists
 
 - name: Install fail2ban
   when: base_fail2ban
