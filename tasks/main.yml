@@ -79,12 +79,6 @@
 
 - name: Configure aide
   ansible.builtin.import_tasks: aide.yml
-  when: base_aide
-  tags: base_aide
-
-- name: Remove aide
-  ansible.builtin.import_tasks: remove_aide.yml
-  when: not base_aide
   tags: base_aide
 
 - name: Enforce apparmpr

@@ -1,51 +1,75 @@
+- name: Aide asserts
+  ansible.builtin.assert:
+    that:
+      - base_aide is boolean
 
 - name: Install aide
-  ansible.builtin.apt:
-    name: aide
-    state: present
-    update_cache: true
-
-- name: Check for db
-  ansible.builtin.stat:
-    path: /var/lib/aide/aide.db
-  register: aide_db
-
-- name: Initialize aide db
-  ansible.builtin.command:
-    cmd: aideinit -y
-  changed_when: true
-  when: not aide_db.stat.exists
-
-- name: Check for weekly cron job
-  ansible.builtin.stat:
-    path: /etc/cron.weekly/aide
-  register: aide_weekly
-
-- name: Create weekly cron job
-  when: not aide_weekly.stat.exists
+  when: base_aide
   block:
-  - name: Check for aide daily cron job
+  - name: Install aide package
+    ansible.builtin.apt:
+      name: aide
+      state: present
+      update_cache: true
+
+  - name: Check for db
     ansible.builtin.stat:
-      path: /etc/cron.daily/aide
-    register: aide_daily
-    failed_when: not aide_daily.stat.exists
+      path: /var/lib/aide/aide.db
+    register: aide_db
 
-  - name: Reschedule aide daily to weekly
+  - name: Initialize aide db
     ansible.builtin.command:
-      cmd: mv -v /etc/cron.daily/aide /etc/cron.weekly/aide
-    register: mv_cmd
-    changed_when: "'renamed' in mv_cmd.stdout"
-    failed_when: mv_cmd.rc != 0
-    when: aide_daily.stat.exists
+      cmd: aideinit -y
+    changed_when: true
+    when: not aide_db.stat.exists
 
-- name: Update db with aide cronjob
-  ansible.builtin.replace:
-    path: /etc/cron.weekly/aide
-    regexp: '^COMMAND=.*check.*'
-    replace: COMMAND="${COMMAND:-update}"
+  - name: Check for weekly cron job
+    ansible.builtin.stat:
+      path: /etc/cron.weekly/aide
+    register: aide_weekly
 
-- name: Copy new db with aide cronjob
-  ansible.builtin.replace:
-    path: /etc/cron.weekly/aide
-    regexp: '^COPYNEWDB=.*no.*"'
-    replace: COPYNEWDB="${COPYNEWDB:-yes}"
+  - name: Create weekly cron job
+    when: not aide_weekly.stat.exists
+    block:
+    - name: Check for aide daily cron job
+      ansible.builtin.stat:
+        path: /etc/cron.daily/aide
+      register: aide_daily
+      failed_when: not aide_daily.stat.exists
+
+    - name: Reschedule aide daily to weekly
+      ansible.builtin.command:
+        cmd: mv -v /etc/cron.daily/aide /etc/cron.weekly/aide
+      register: mv_cmd
+      changed_when: "'renamed' in mv_cmd.stdout"
+      failed_when: mv_cmd.rc != 0
+      when: aide_daily.stat.exists
+
+  - name: Update db with aide cronjob
+    ansible.builtin.replace:
+      path: /etc/cron.weekly/aide
+      regexp: '^COMMAND=.*check.*'
+      replace: COMMAND="${COMMAND:-update}"
+
+  - name: Copy new db with aide cronjob
+    ansible.builtin.replace:
+      path: /etc/cron.weekly/aide
+      regexp: '^COPYNEWDB=.*no.*"'
+      replace: COPYNEWDB="${COPYNEWDB:-yes}"
+
+- name: Remove aide
+  when: not base_aide
+  block:
+  - name: Purge aide package
+    ansible.builtin.apt:
+      name: aide
+      state: absent
+      purge: true
+
+  - name: Remove logs and cron file
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: absent
+    with_items:
+      - /var/log/aide
+      - /etc/cron.weekly/aide
