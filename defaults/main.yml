@@ -1,6 +1,9 @@
 ---
 base_timezone: "America/New_York"
 
+base_fstab_tmp: "tmpfs   /tmp         tmpfs   rw,nodev,nosuid,noexec 0 0"
+base_fstab_var_tmp: "tmpfs   /var/tmp         tmpfs   rw,nodev,nosuid,noexec 0 0"
+
 base_fail2ban: false
 base_fail2ban_sshd_bantime: "1h"
 base_fail2ban_sshd_findtime: "5m"

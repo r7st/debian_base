@@ -21,14 +21,8 @@
   when: base_unattended_upgrades
   tags: base_unattended_upgrades
 
-- name: Fstab /tmp and /var/tmp
-  ansible.builtin.lineinfile:
-    path: /etc/fstab
-    line: "{{ item }}"
-  loop:
-    - "tmpfs   /tmp         tmpfs   rw,nodev,nosuid,noexec 0 0"
-    - "tmpfs   /var/tmp         tmpfs   rw,nodev,nosuid,noexec 0 0"
-  notify: Restart server
+- name: Fstab configuration
+  ansible.builtin.import_tasks: fstab.yml
   tags: base_fstab
 
 - name: Set timezone

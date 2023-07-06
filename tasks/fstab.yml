@@ -1,0 +1,55 @@
+- name: Check for /tmp mount
+  ansible.builtin.command:
+    cmd: egrep "[ \t]\/tmp[ \t]" /etc/fstab
+  changed_when: false
+  failed_when: false
+  register: tmp_check
+
+- name: Debug warning
+  ansible.builtin.debug:
+    msg: "Warning: /tmp entry exists"
+  when: tmp_check.rc == 0
+
+- name: Update fstab for /tmp
+  notify: Restart server
+  block:
+  - name: Ensure tmpfs entry exists for /tmp
+    ansible.builtin.lineinfile:
+      path: /etc/fstab
+      line: "{{ base_fstab_tmp }}"
+    register: tmp_changed
+
+  - name: Removing old /tmp entry
+    ansible.builtin.lineinfile:
+      path: /etc/fstab
+      line: "{{ tmp_check.stdout }}"
+      state: absent
+    when: (tmp_changed.changed) and (tmp_check.rc == 0)
+
+- name: Check for /var/tmp mount
+  ansible.builtin.command:
+    cmd: egrep "[ \t]\/var\/tmp[ \t]" /etc/fstab
+  changed_when: false
+  failed_when: false
+  register: var_tmp_check
+
+- name: Debug warning
+  ansible.builtin.debug:
+    msg: "Warning: /var/tmp entry exists"
+  when: var_tmp_check.rc == 0
+
+- name: Update fstab for /var/tmp
+  notify: Restart server
+  block:
+  - name: Ensure tmpfs entry exists for /var/tmp
+    ansible.builtin.lineinfile:
+      path: /etc/fstab
+      line: "{{ base_fstab_var_tmp }}" 
+    register: var_tmp_changed
+
+  - name: Removing old /var/tmp entry
+    ansible.builtin.lineinfile:
+      path: /etc/fstab
+      line: "{{ var_tmp_check.stdout }}" 
+      state: absent
+    when: (var_tmp_changed.changed) and (var_tmp_check.rc == 0)
