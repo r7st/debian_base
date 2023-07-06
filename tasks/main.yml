@@ -94,7 +94,13 @@
   tags: base_apparmor
 
 - name: Disable coredumps
-  ansible.builtin.import_tasks: coredump.yml
+  ansible.builtin.copy:
+    src: files/coredump.conf
+    dest: /etc/systemd/coredump.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart server
   tags: base_disable_coredump
 
 - name: Flush handlers
