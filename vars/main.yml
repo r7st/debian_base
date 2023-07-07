@@ -6,8 +6,6 @@ base_install_packages:
   - rsync
   - htop
   - net-tools
-  - postfix
-  - bsd-mailx
   - rng-tools
   - anacron
   - apparmor-profiles
@@ -16,3 +14,4 @@ base_install_packages:
   - apparmor-utils
   - time
   - nvi
+  - info
