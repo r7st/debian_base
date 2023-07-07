@@ -8,6 +8,12 @@ base_repos:
   - bullseye-updates
   - bullseye-backports
 
+base_ntp_servers:
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
+  - 2.pool.ntp.org
+  - 3.pool.ntp.org
+
 base_timezone: "America/New_York"
 
 base_fstab_tmp: "tmpfs   /tmp         tmpfs   rw,nodev,nosuid,noexec 0 0"

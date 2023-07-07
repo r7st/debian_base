@@ -1,3 +1,9 @@
+- name: Chrony asserts
+  ansible.builtin.assert:
+    that:
+      - base_ntp_servers is defined
+      - base_ntp_servers | length > 0
+
 - name: Install chrony
   ansible.builtin.apt:
     name: chrony
@@ -16,10 +22,13 @@
     state: stopped
     masked: true
 
-- name: No chrony udp listener
-  ansible.builtin.lineinfile:
-    path: /etc/chrony/chrony.conf
-    line: "cmdport 0"
+- name: Copy chrony config
+  ansible.builtin.template:
+    src: templates/chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
+    owner: root
+    group: root
+    mode: "0644"
   notify: Restart chronyd
 
 - name: Start and enable chrony
