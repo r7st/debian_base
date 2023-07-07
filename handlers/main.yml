@@ -31,3 +31,7 @@
   ansible.builtin.systemd:
     name: unattended-upgrades
     state: restarted
+
+- name: Clear apt cache
+  ansible.builtin.apt:
+    clean: true

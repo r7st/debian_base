@@ -4,6 +4,19 @@
     that:
       - base_timezone is defined
 
+- name: Configure debian sources
+  ansible.builtin.template:
+    src: templates/sources.list.j2
+    dest: /etc/apt/sources.list
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Clear apt cache
+  tags: base_sources
+
+- name: Flush handlers (for apt sources)
+  ansible.builtin.meta: flush_handlers
+
 - name: Update packages
   ansible.builtin.apt:
     name: "*"

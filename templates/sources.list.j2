@@ -1,0 +1,28 @@
+#######################
+### ANSIBLE MANAGED ###
+#######################
+
+######################
+### BGN BASE REPOS ###
+######################
+{% for repo in base_repos %}
+deb {{ base_proto }}://{{ base_mirror }}/debian{% if repo == 'bullseye-security' %}-security{% endif %} {{ repo }} main
+{% if base_deb_src %}
+deb-src {{ base_proto }}://{{ base_mirror }}/debian{% if repo == 'bullseye-security' %}-security{% endif %} {{ repo }} main
+{% endif %}
+{% endfor %}
+######################
+### END BASE REPOS ###
+######################
+{% if (base_custom_sources is defined) and (base_custom_sources | length > 0) %}
+
+########################
+### BGN CUSTOM REPOS ###
+########################
+{% for source in base_custom_sources %}
+{{ source }}
+{% endfor %}
+########################
+### END CUSTOM REPOS ###
+########################
+{% endif %}
