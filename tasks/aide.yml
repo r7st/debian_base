@@ -21,6 +21,9 @@
     ansible.builtin.command:
       cmd: aideinit -y
     changed_when: true
+    failed_when: aideinit_cmd.rc != 0
+    failed_when: '"cannot get lock" in aideinit_cmd.stderr'
+    register: aideinit_cmd
     when: not aide_db.stat.exists
 
   - name: Check for weekly cron job

@@ -2,7 +2,7 @@
   ansible.builtin.command:
     cmd: egrep "[ \t]\/tmp[ \t]" /etc/fstab
   changed_when: false
-  failed_when: false
+  failed_when: tmp_check.rc == 2
   register: tmp_check
 
 - name: Debug warning
@@ -30,7 +30,7 @@
   ansible.builtin.command:
     cmd: egrep "[ \t]\/var\/tmp[ \t]" /etc/fstab
   changed_when: false
-  failed_when: false
+  failed_when: var_tmp_check.rc == 2
   register: var_tmp_check
 
 - name: Debug warning
