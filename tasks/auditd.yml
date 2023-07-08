@@ -17,28 +17,28 @@
     masked: true
   notify: Restart journald
 
-- name: Copy audit rules
-  ansible.builtin.copy:
-    src: files/audit.rules
-    dest: /etc/audit/rules.d/audit.rules
-    owner: root
-    group: root
-    mode: "0600"
+- name: Configure auditd
   notify: Restart auditd
+  block:
+  - name: Copy audit rules
+    ansible.builtin.copy:
+      src: files/audit.rules
+      dest: /etc/audit/rules.d/audit.rules
+      owner: root
+      group: root
+      mode: "0600"
 
-- name: Remove deprecated parameters
-  ansible.builtin.lineinfile:
-    path: /etc/audit/auditd.conf
-    state: absent
-    regexp: '{{ item }}'
-  loop:
-    - '^disp_qos'
-    - '^dispatcher'
-  notify: Restart auditd
+  - name: Remove deprecated parameters
+    ansible.builtin.lineinfile:
+      path: /etc/audit/auditd.conf
+      state: absent
+      regexp: '{{ item }}'
+    loop:
+      - '^disp_qos'
+      - '^dispatcher'
 
-- name: Set audit log rotation
-  ansible.builtin.lineinfile:
-    path: /etc/audit/auditd.conf
-    regexp: '^max_log_file_action'
-    line: 'max_log_file_action = rotate'
-  notify: Restart auditd
+  - name: Set audit log rotation
+    ansible.builtin.lineinfile:
+      path: /etc/audit/auditd.conf
+      regexp: '^max_log_file_action'
+      line: 'max_log_file_action = rotate'
