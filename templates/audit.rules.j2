@@ -1,0 +1,46 @@
+#######################
+### ANSIBLE MANAGED ###
+#######################
+
+-D
+-b 8192
+-f 1
+-i
+
+## Kernel parameters
+-w /etc/sysctl.conf -p wa -k sysctl
+-w /etc/sysctl.d -p wa -k sysctl
+
+## User, group, password databases
+-w /etc/group -p wa -k etcgroup
+-w /etc/passwd -p wa -k etcpasswd
+-w /etc/gshadow -k etcgroup
+-w /etc/shadow -k etcpasswd
+-w /etc/security/opasswd -k opasswd
+
+## Sudoers file changes
+-w /etc/sudoers -p wa -k actions
+-w /etc/sudoers.d/ -p wa -k actions
+
+## Passwd
+-w /usr/bin/passwd -p x -k passwd_modification
+
+## SSH configuration
+-w /etc/ssh/sshd_config -k sshd
+-w /etc/ssh/sshd_config.d -k sshd
+
+## Process ID change (switching accounts) applications
+-w /bin/su -p x -k priv_esc
+-w /usr/bin/sudo -p x -k priv_esc
+{% if (base_auditd_custom_rules is defined) and (base_auditd_custom_rules | length > 0) %}
+
+########################
+### BGN CUSTOM RULES ###
+########################
+{% for rule in base_auditd_custom_rules %}
+{{ rule }}
+{% endfor %}
+########################
+### END CUSTOM RULES ###
+########################
+{% endif %}

@@ -21,8 +21,8 @@
   notify: Restart auditd
   block:
   - name: Copy audit rules
-    ansible.builtin.copy:
-      src: files/audit.rules
+    ansible.builtin.template:
+      src: templates/audit.rules.j2
       dest: /etc/audit/rules.d/audit.rules
       owner: root
       group: root
