@@ -1,4 +1,6 @@
 ---
+base_allow_reboot: true
+
 base_mirror: deb.debian.org
 base_proto: https
 base_deb_src: false

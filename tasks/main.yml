@@ -5,6 +5,7 @@
       - ansible_distribution == "Debian"
       - ansible_distribution_major_version == "11"
       - base_timezone is defined
+      - base_allow_reboot is boolean
 
 - name: Configure debian sources
   ansible.builtin.template:
