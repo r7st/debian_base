@@ -25,17 +25,11 @@
     register: aideinit_cmd
     when: not aide_db.stat.exists
 
-  - name: Update db with aide cronjob
+  - name: Aide default copynewdb
     ansible.builtin.replace:
-      path: /etc/cron.daily/aide
-      regexp: '^COMMAND=.*check.*'
-      replace: COMMAND="${COMMAND:-update}"
-
-  - name: Copy new db with aide cronjob
-    ansible.builtin.replace:
-      path: /etc/cron.daily/aide
-      regexp: '^COPYNEWDB=.*no.*"'
-      replace: COPYNEWDB="${COPYNEWDB:-yes}"
+      path: /etc/default/aide
+      regexp: '^COPYNEWDB=no'
+      replace: COPYNEWDB=yes
 
 - name: Remove aide
   when: not base_aide
@@ -52,4 +46,5 @@
       state: absent
     with_items:
       - /var/log/aide
-      - /etc/cron.weekly/aide
+      - /etc/cron.daily/aide
+      - /etc/default/aide
