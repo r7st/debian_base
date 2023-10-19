@@ -2,7 +2,7 @@ debian_base is intended to be supplementary configuration/hardening to the devse
 
 https://github.com/dev-sec/ansible-collection-hardening
 
-It runs on Debian 11.
+It runs on Debian 11 & 12.
 
 It can be run with something like the following playbook:
 ```
