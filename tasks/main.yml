@@ -3,7 +3,8 @@
   ansible.builtin.assert:
     that:
       - ansible_distribution == "Debian"
-      - ansible_distribution_major_version == "11"
+      - (ansible_distribution_major_version == "11") or
+        (ansible_distribution_major_version == "12")
       - base_timezone is defined
       - base_allow_reboot is boolean
 
@@ -14,23 +15,29 @@
     owner: root
     group: root
     mode: "0644"
-  notify: Clear apt cache
   tags: base_sources
-
-- name: Flush handlers (for apt sources)
-  ansible.builtin.meta: flush_handlers
 
 - name: Update packages
   ansible.builtin.apt:
     name: "*"
     update_cache: true
     state: latest
+    clean: true
   tags: base_update_packages
 
 - name: Check for reboot
   ansible.builtin.stat:
     path: /var/run/reboot-required
+  register: reboot_required
+
+- name: Trigger reboot
+  ansible.builtin.debug:
+    msg: "Adding reboot to handlers"
+  changed_when: reboot_required.stat.exists
   notify: Restart server
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
 
 - name: Configure unattended upgrades
   ansible.builtin.import_tasks: unattended_upgrades.yml

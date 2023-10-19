@@ -6,9 +6,9 @@
 ### BGN BASE REPOS ###
 ######################
 {% for repo in base_repos %}
-deb {{ base_proto }}://{{ base_mirror }}/debian{% if repo == 'bullseye-security' %}-security{% endif %} {{ repo }} main
+deb {{ base_proto }}://{{ base_mirror }}/{{ repo }} main
 {% if base_deb_src %}
-deb-src {{ base_proto }}://{{ base_mirror }}/debian{% if repo == 'bullseye-security' %}-security{% endif %} {{ repo }} main
+deb-src {{ base_proto }}://{{ base_mirror }}/{{ repo }} main
 {% endif %}
 {% endfor %}
 ######################

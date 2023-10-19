@@ -5,10 +5,10 @@ base_mirror: deb.debian.org
 base_proto: https
 base_deb_src: false
 base_repos:
-  - bullseye
-  - bullseye-security
-  - bullseye-updates
-  - bullseye-backports
+  - "debian {{ ansible_facts.lsb.codename }}"
+  - "debian-security {{ ansible_facts.lsb.codename }}-security"
+  - "debian {{ ansible_facts.lsb.codename }}-updates"
+  - "debian {{ ansible_facts.lsb.codename }}-backports"
 
 base_ntp_servers:
   - 0.pool.ntp.org
