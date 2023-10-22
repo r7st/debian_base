@@ -21,8 +21,12 @@
     ansible.builtin.command:
       cmd: aideinit -y
     changed_when: true
-    failed_when: (aideinit_cmd.rc != 0) or ('"cannot get lock" in aideinit_cmd.stderr')
+    failed_when:
+      - aideinit_cmd.rc != 0
+      - '"cannot get lock" in aideinit_cmd.stderr'
     register: aideinit_cmd
+    async: 1800
+    poll: 60
     when: not aide_db.stat.exists
 
   - name: Aide default copynewdb
