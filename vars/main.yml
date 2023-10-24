@@ -18,4 +18,5 @@ base_install_packages:
   - apt-listbugs
   - apt-show-versions
   - needrestart
+  - etckeeper
   - debsecan
