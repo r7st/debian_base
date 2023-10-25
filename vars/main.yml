@@ -15,8 +15,6 @@ base_install_packages:
   - time
   - nvi
   - info
-  - apt-listbugs
-  - apt-show-versions
   - needrestart
   - etckeeper
   - debsecan
