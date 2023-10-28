@@ -1,0 +1,19 @@
+---
+- name: Install resolved
+  ansible.builtin.apt:
+    name: systemd-resolved
+    state: latest
+    update_cache: true
+
+- name: Start and enable resolved
+  ansible.builtin.systemd:
+    name: systemd-resolved
+    state: started
+    enabled: true
+
+- name: Configure resolved
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/resolved.conf
+    regexp: "^#?DNS=.*"
+    line: "DNS={{ base_dns }}"
+  notify: Restart resolved

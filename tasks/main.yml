@@ -82,6 +82,10 @@
   with_items: "{{ base_install_packages }}"
   tags: base_install_packages
 
+- name: Configure resolved
+  ansible.builtin.import_tasks: resolved.yml
+  tags: base_resolved
+
 - name: Configure chrony
   ansible.builtin.import_tasks: chrony.yml
   tags: base_chrony
