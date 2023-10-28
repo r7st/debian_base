@@ -14,7 +14,7 @@
     line: "{{ item }}"
     insertbefore: EOF
   with_items:
-    - "\n# Ansible managed hosts below (DO NOT EDIT)"
+    - "# Ansible managed hosts below (DO NOT EDIT)"
     - "{{ base_additional_hosts }}"
   when:
     - base_additional_hosts is defined
