@@ -17,3 +17,21 @@
     regexp: "^#?DNS=.*"
     line: "DNS={{ base_dns }}"
   notify: Restart resolved
+
+- name: DNS over TLS
+  when:
+    - base_dot is defined
+    - base_dot
+  notify: Restart resolved
+  block:
+    - name: Enable DLS over TLS
+      ansible.builtin.lineinfile:
+        path: /etc/systemd/resolved.conf
+        regexp: "^#?DNSOverTLS=.*"
+        line: "DNSOverTLS=yes"
+
+    - name: Enable DNSSEC
+      ansible.builtin.lineinfile:
+        path: /etc/systemd/resolved.conf
+        regexp: "^#?DNSSEC=.*"
+        line: "DNSSEC=yes"
