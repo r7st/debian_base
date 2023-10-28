@@ -6,6 +6,7 @@ base_install_packages:
   - rsync
   - htop
   - net-tools
+  - tcpdump
   - rng-tools
   - anacron
   - apparmor-profiles
