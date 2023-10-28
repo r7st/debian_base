@@ -8,6 +8,19 @@
       - base_timezone is defined
       - base_allow_reboot is boolean
 
+- name: Update hosts file
+  ansible.builtin.lineinfile:
+    dest: /etc/hosts
+    line: "{{ item }}"
+    insertbefore: EOF
+  with_items:
+    - "\n# Ansible managed hosts below (DO NOT EDIT)"
+    - "{{ base_additional_hosts }}"
+  when:
+    - base_additional_hosts is defined
+    - base_additional_hosts | length > 0
+  tags: base_update_hosts
+
 - name: Configure debian sources
   ansible.builtin.template:
     src: templates/sources.list.j2
