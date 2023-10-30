@@ -9,16 +9,12 @@
       - base_allow_reboot is boolean
 
 - name: Update hosts file
-  ansible.builtin.lineinfile:
+  ansible.builtin.template:
+    src: templates/hosts.j2
     dest: /etc/hosts
-    line: "{{ item }}"
-    insertbefore: EOF
-  with_items:
-    - "# Ansible managed hosts below (DO NOT EDIT)"
-    - "{{ base_additional_hosts }}"
-  when:
-    - base_additional_hosts is defined
-    - base_additional_hosts | length > 0
+    owner: root
+    group: root
+    mode: "644"
   tags: base_update_hosts
 
 - name: Configure debian sources
