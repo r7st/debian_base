@@ -7,31 +7,80 @@
 -f 1
 -i
 
-## Kernel parameters
--w /etc/sysctl.conf -p wa -k sysctl
--w /etc/sysctl.d -p wa -k sysctl
-
 ## User, group, password databases
--w /etc/group -p wa -k etcgroup
--w /etc/passwd -p wa -k etcpasswd
--w /etc/gshadow -k etcgroup
--w /etc/shadow -k etcpasswd
--w /etc/security/opasswd -k opasswd
+-w /etc/group -p wa -k passwd_db
+-w /etc/passwd -p wa -k passwd_db
+-w /etc/gshadow -k passwd_db
+-w /etc/shadow -k passwd_db
+-w /etc/security/opasswd -k passwd_db
+
+## User modification cmds
+-w /usr/sbin/usermod -p x -k user_group_cmds
+-w /usr/sbin/useradd -p x -k user_group_cmds
+-w /usr/sbin/userdel -p x -k user_group_cmds
+-w /usr/sbin/groupmod -p x -k user_group_cmds
+-w /usr/sbin/groupadd -p x -k user_group_cmds
+-w /usr/sbin/groupdel -p x -k user_group_cmds
+-w /usr/sbin/adduser -p x -k user_group_cmds
+-w /usr/sbin/deluser -p x -k user_group_cmds
+-w /usr/sbin/addgroup -p x -k user_group_cmds
+-w /usr/sbin/delgroup -p x -k user_group_cmds
+-w /usr/bin/passwd -p x -k user_group_cmds
 
 ## Sudoers file changes
 -w /etc/sudoers -p wa -k actions
 -w /etc/sudoers.d/ -p wa -k actions
 
-## Passwd
--w /usr/bin/passwd -p x -k passwd_modification
+## Sshd use/configuration
+-w /etc/ssh/sshd_config -k ssh
+-w /etc/ssh/sshd_config.d -k ssh
+-w /usr/bin/ssh -p x -k ssh
 
-## SSH configuration
--w /etc/ssh/sshd_config -k sshd
--w /etc/ssh/sshd_config.d -k sshd
+## Iptables configuration
+-w /etc/iptables/rules.v4 -p wa -k iptables
+-w /etc/iptables/rules.v6 -p wa -k iptables
+-w /etc/iptables/ -p wa -k iptables
 
-## Process ID change (switching accounts) applications
+## Kernel parameters
+-w /etc/sysctl.conf -p wa -k sysctl
+-w /etc/sysctl.d -p wa -k sysctl
+-w /usr/bin/sysctl -p x -k sysctl
+
+## Network config changes
+-w /etc/network -p wa -k net_conf
+
+## Audit conf changes
+-w /etc/audit -p wa -k audit_conf
+
+## Conf changes
+-w /etc -p wa -k conf_change
+
+## Watch cmds
+-w /usr/bin/crontab -p x -k watch_cmds
+-w /usr/sbin/iptables -p x -k watch_cmds
+-w /usr/sbin/nft -p x -k watch_cmds
+-w /usr/bin/systemctl -p x -k watch_cmds
+-w /usr/sbin/service -p x -k watch_cmds
+-w /usr/sbin/auditctl -p x -k watch_cmds
+-w /usr/sbin/shutdown -p x -k watch_cmds
+-w /usr/sbin/halt -p x -k watch_cmds
+-w /usr/sbin/reboot -p x -k watch_cmds
+-w /usr/bin/mount -p x -k watch_cmds
+-w /usr/bin/umount -p x -k watch_cmds
+
+## Mounts
+-a exit,always -F arch=b64 -F euid=0 -F auid!=unset -S mount,umount2 -k mounts
+-a exit,always -F arch=b32 -F euid=0 -F auid!=unset -S mount,umount2 -k mounts
+
+## Priv esc execve
 -w /bin/su -p x -k priv_esc
 -w /usr/bin/sudo -p x -k priv_esc
+-a exit,always -F arch=b64 -F auid>=1000 -F euid=0 -F auid!=unset -S execve -k priv_esc
+-a exit,always -F arch=b32 -F auid>=1000 -F euid=0 -F auid!=unset -S execve -k priv_esc
+
+## Root execve
+-a exit,always -F arch=b64 -F euid=0 -F auid!=unset -S execve -k root_cmds
+-a exit,always -F arch=b32 -F euid=0 -F auid!=unset -S execve -k root_cmds
 {% if (base_auditd_custom_rules is defined) and (base_auditd_custom_rules | length > 0) %}
 
 ########################
