@@ -5,7 +5,6 @@
       - ansible_distribution == "Debian"
       - (ansible_distribution_major_version == "11") or
         (ansible_distribution_major_version == "12")
-      - base_timezone is defined
       - base_allow_reboot is boolean
 
 - name: Update hosts file
@@ -59,7 +58,7 @@
 
 - name: Set timezone
   community.general.timezone:
-    name: "{{ base_timezone }}"
+    name: "{{ base_timezone | default('UTC') }}"
   tags: base_timezone
 
 - name: Remove packages
