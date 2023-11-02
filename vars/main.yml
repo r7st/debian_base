@@ -8,6 +8,7 @@ base_install_packages:
   - net-tools
   - tcpdump
   - rng-tools
+  - cron
   - anacron
   - apparmor-profiles
   - apparmor-profiles-extra
