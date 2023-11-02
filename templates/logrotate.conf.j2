@@ -1,0 +1,28 @@
+#######################
+### ANSIBLE MANAGED ###
+#######################
+
+{% if base_logrotate_frequency is defined and 
+base_logrotate_frequency in ["daily", "weekly", "monthly", "yearly"] %}
+{{ base_logrotate_frequency }}
+{% else %}
+weekly
+{% endif %}
+{% if base_logrotate_keep is defined and
+base_logrotate_keep is integer %}
+rotate {{ base_logrotate_keep }}
+{% else %}
+rotate 4
+{% endif %}
+copytruncate
+notifempty
+{% if base_logrotate_compress is defined and
+base_logrotate_compress is true %}
+compress
+delaycompress
+{% endif %}
+{% if base_logrotate_size is defined %}
+size {{base_logrotate_size }}
+{% endif %}
+
+include /etc/logrotate.d

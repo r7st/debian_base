@@ -117,6 +117,15 @@
   changed_when: false
   tags: base_apparmor
 
+- name: Configure logrotate
+  ansible.builtin.template:
+    src: templates/logrotate.conf.j2
+    dest: /etc/logrotate.conf
+    owner: root
+    group: root
+    mode: "0644"
+  tags: base_logrotate
+
 - name: Disable coredumps
   ansible.builtin.copy:
     src: files/coredump.conf
