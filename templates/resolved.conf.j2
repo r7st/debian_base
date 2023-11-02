@@ -1,0 +1,15 @@
+#######################
+### ANSIBLE MANAGED ###
+#######################
+
+[Resolve]
+{% if base_dns is defined %}
+DNS={{ base_dns }}
+{% else %}
+DNS="1.1.1.1 1.0.0.1"
+{% endif %}
+{% if base_dot is defined and
+base_dot is true %}
+DNSSEC=yes
+DNSOverTLS=yes
+{% endif %}
