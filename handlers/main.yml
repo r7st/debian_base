@@ -23,11 +23,6 @@
     name: chrony
     state: restarted
 
-- name: Restart fail2ban
-  ansible.builtin.systemd:
-    name: fail2ban
-    state: restarted
-
 - name: Restart unattended-upgrades
   ansible.builtin.systemd:
     name: unattended-upgrades
