@@ -99,10 +99,6 @@
   ansible.builtin.import_tasks: postfix.yml
   tags: base_postfix
 
-- name: Configure clamav
-  ansible.builtin.import_tasks: clamav.yml
-  tags: base_clamav
-
 - name: Configure fail2ban
   ansible.builtin.import_tasks: fail2ban.yml
   tags: base_fail2ban

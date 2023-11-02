@@ -34,8 +34,4 @@ base_unattended_upgrades_reboot: false
 
 base_auditd: true
 
-base_clamav: false
-base_clamav_cronjobs:
-- "0 0 * * * nice -n19 clamscan -ri /home"
-
 base_aide: false
