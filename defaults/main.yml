@@ -1,6 +1,4 @@
 ---
-base_allow_reboot: true
-
 base_mirror: deb.debian.org
 base_proto: https
 base_deb_src: false
@@ -21,7 +19,5 @@ base_fstab_var_tmp: "tmpfs   /var/tmp         tmpfs   rw,nodev,nosuid,noexec 0 0
 
 base_unattended_upgrades: true
 base_unattended_upgrades_reboot: false
-
 base_auditd: true
-
 base_aide: false

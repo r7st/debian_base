@@ -1,7 +1,7 @@
 ---
 - name: Restart server
   ansible.builtin.reboot:
-  when: base_allow_reboot
+  when: base_allow_reboot | default(true)
 
 - name: Restart postfix
   ansible.builtin.systemd:

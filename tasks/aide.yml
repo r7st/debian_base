@@ -1,7 +1,6 @@
 - name: Aide asserts
   ansible.builtin.assert:
-    that:
-      - base_aide is boolean
+    that: base_aide is boolean
 
 - name: Install aide
   when: base_aide

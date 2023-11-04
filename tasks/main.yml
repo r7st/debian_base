@@ -3,9 +3,7 @@
   ansible.builtin.assert:
     that:
       - ansible_distribution == "Debian"
-      - (ansible_distribution_major_version == "11") or
-        (ansible_distribution_major_version == "12")
-      - base_allow_reboot is boolean
+      - ansible_distribution_major_version in ["11", "12"]
 
 - name: Update hosts file
   ansible.builtin.template:

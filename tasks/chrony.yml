@@ -1,8 +1,6 @@
 - name: Chrony asserts
   ansible.builtin.assert:
-    that:
-      - base_ntp_servers is defined
-      - base_ntp_servers | length > 0
+    that: base_ntp_servers | length > 0
 
 - name: Install chrony
   ansible.builtin.apt:
