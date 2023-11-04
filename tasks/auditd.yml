@@ -1,44 +1,65 @@
-- name: Install auditd
-  ansible.builtin.apt:
-    name: auditd
-    state: present
-    update_cache: true
-
-- name: Start and enable auditd
-  ansible.builtin.systemd:
-    name: auditd
-    state: started
-    enabled: true
-
-- name: Stop and mask journald-audit
-  ansible.builtin.systemd:
-    name: systemd-journald-audit.socket
-    state: stopped
-    masked: true
-  notify: Restart journald
-
-- name: Configure auditd
-  notify: Restart auditd
+- name: Enable auditd
+  when: base_auditd
   block:
-  - name: Copy audit rules
-    ansible.builtin.template:
-      src: templates/audit.rules.j2
-      dest: /etc/audit/rules.d/audit.rules
-      owner: root
-      group: root
-      mode: "0600"
+  - name: Install auditd
+    ansible.builtin.apt:
+      name: auditd
+      state: present
+      update_cache: true
 
-  - name: Remove deprecated parameters
-    ansible.builtin.lineinfile:
-      path: /etc/audit/auditd.conf
+  - name: Start and enable auditd
+    ansible.builtin.systemd:
+      name: auditd
+      state: started
+      enabled: true
+
+  - name: Stop and mask journald-audit
+    ansible.builtin.systemd:
+      name: systemd-journald-audit.socket
+      state: stopped
+      masked: true
+    notify: Restart journald
+
+  - name: Configure auditd
+    notify: Restart auditd
+    block:
+    - name: Configure auditd
+      ansible.builtin.template:
+        src: templates/auditd.conf.j2
+        dest: /etc/audit/auditd.conf
+        owner: root
+        group: root
+        mode: "0640"
+
+    - name: Copy audit rules
+      ansible.builtin.template:
+        src: templates/audit.rules.j2
+        dest: /etc/audit/rules.d/audit.rules
+        owner: root
+        group: root
+        mode: "0600"
+
+- name: Disable auditd
+  when: not base_auditd
+  block:
+  - name: Remove auditd package
+    ansible.builtin.apt:
+      name: auditd
       state: absent
-      regexp: '{{ item }}'
-    loop:
-      - '^disp_qos'
-      - '^dispatcher'
+      update_cache: true
+      purge: true
+      autoremove: true
 
-  - name: Set audit log rotation
-    ansible.builtin.lineinfile:
-      path: /etc/audit/auditd.conf
-      regexp: '^max_log_file_action'
-      line: 'max_log_file_action = rotate'
+  - name: Remove auditd conf/logs
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: absent
+    with_items:
+      - /etc/audit
+      - /var/log/audit
+
+  - name: Unmask journald-audit
+    ansible.builtin.systemd:
+      name: systemd-journald-audit.socket
+      masked: false
+    notify: Restart journald

@@ -39,7 +39,6 @@
 
 - name: Configure auditd
   ansible.builtin.import_tasks: auditd.yml
-  when: base_auditd
   tags: base_auditd
 
 - name: Configure postfix
