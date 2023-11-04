@@ -1,6 +1,4 @@
 ---
-base_remove_packages:
-
 base_install_packages:
   - screen
   - rsync

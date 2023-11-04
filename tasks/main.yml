@@ -5,45 +5,9 @@
       - ansible_distribution == "Debian"
       - ansible_distribution_major_version in ["11", "12"]
 
-- name: Update hosts file
-  ansible.builtin.template:
-    src: templates/hosts.j2
-    dest: /etc/hosts
-    owner: root
-    group: root
-    mode: "644"
-  tags: base_update_hosts
-
-- name: Configure debian sources
-  ansible.builtin.template:
-    src: templates/sources.list.j2
-    dest: /etc/apt/sources.list
-    owner: root
-    group: root
-    mode: "0644"
-  tags: base_sources
-
-- name: Update packages
-  ansible.builtin.apt:
-    name: "*"
-    update_cache: true
-    state: latest
-    clean: true
-  tags: base_update_packages
-
-- name: Check for reboot
-  ansible.builtin.stat:
-    path: /var/run/reboot-required
-  register: reboot_required
-
-- name: Trigger reboot
-  ansible.builtin.debug:
-    msg: "Adding reboot to handlers"
-  changed_when: reboot_required.stat.exists
-  notify: Restart server
-
-- name: Flush handlers
-  ansible.builtin.meta: flush_handlers
+- name: Package operations
+  ansible.builtin.import_tasks: packages.yml
+  tags: base_packages
 
 - name: Configure unattended upgrades
   ansible.builtin.import_tasks: unattended_upgrades.yml
@@ -58,22 +22,6 @@
   community.general.timezone:
     name: "{{ base_timezone | default('UTC') }}"
   tags: base_timezone
-
-- name: Remove packages
-  ansible.builtin.apt:
-    name: "{{ item }}"
-    state: absent
-    purge: true
-  with_items: "{{ base_remove_packages }}"
-  tags: base_remove_packages
-
-- name: Install packages
-  ansible.builtin.apt:
-    name: "{{ item }}"
-    state: present
-    update_cache: true
-  with_items: "{{ base_install_packages }}"
-  tags: base_install_packages
 
 - name: Configure resolved
   ansible.builtin.template:

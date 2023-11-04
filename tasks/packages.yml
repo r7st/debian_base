@@ -1,0 +1,75 @@
+---
+- name: Configure debian sources
+  ansible.builtin.template:
+    src: templates/sources.list.j2
+    dest: /etc/apt/sources.list
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Update packages
+  ansible.builtin.apt:
+    name: "*"
+    update_cache: true
+    state: latest
+    clean: true
+
+- name: Check for reboot
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+  register: reboot_required
+
+- name: Trigger reboot
+  ansible.builtin.debug:
+    msg: "Adding reboot to handlers"
+  changed_when: reboot_required.stat.exists
+  notify: Restart server
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Remove packages
+  when:
+    - base_remove_packages is defined
+    - base_remove_packages | length > 0
+  block:
+  - name: Create package list
+    ansible.builtin.set_fact:
+      bulk_packages: "{{ base_remove_packages | join(' ') }}"
+
+  - name: List packages
+    ansible.builtin.debug:
+      msg: "Bulk removing: {{ bulk_packages }}"
+
+  - name: Remove packages
+    ansible.builtin.shell:
+      cmd: apt remove $PACKAGES -y
+    environment:
+      - PACKAGES: "{{ bulk_packages }}"
+    when:
+    register: removed
+    changed_when: "'0 to remove' not in removed.stdout"
+    failed_when: removed.rc != 0
+    ignore_errors: true
+
+- name: Install packages
+  when:
+    - base_install_packages is defined
+    - base_install_packages | length > 0
+  block:
+  - name: Create package list
+    ansible.builtin.set_fact:
+      bulk_packages: "{{ base_install_packages | join(' ') }}"
+
+  - name: List packages
+    ansible.builtin.debug:
+      msg: "Bulk installing: {{ bulk_packages }}"
+
+  - name: Install packages
+    ansible.builtin.shell:
+      cmd: apt install $PACKAGES -y
+    environment:
+      - PACKAGES: "{{ bulk_packages }}"
+    register: installed
+    changed_when: "'0 upgraded, 0 newly installed' not in installed.stdout"
+    failed_when: installed.rc != 0
