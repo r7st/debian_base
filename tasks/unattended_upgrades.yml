@@ -30,6 +30,7 @@
     ansible.builtin.apt:
       name: unattended-upgrades
       state: absent
+      purge: true
       autoremove: true
 
   - name: Remove unattended upgrades conf
