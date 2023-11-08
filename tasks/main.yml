@@ -23,13 +23,7 @@
   tags: base_timezone
 
 - name: Configure resolved
-  ansible.builtin.template:
-    src: templates/resolved.conf.j2
-    dest: /etc/systemd/resolved.conf
-    owner: root
-    group: root
-    mode: "0644"
-  notify: Restart resolved
+  ansible.builtin.import_tasks: resolved.yml
   tags: base_resolved
 
 - name: Configure chrony

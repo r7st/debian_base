@@ -12,7 +12,6 @@ base_install_packages:
   - apparmor-profiles-extra
   - apparmor-easyprof
   - apparmor-utils
-  - systemd-resolved
   - time
   - nvi
   - info
