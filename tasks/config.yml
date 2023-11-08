@@ -1,0 +1,33 @@
+---
+- name: Configure chrony
+  ansible.builtin.import_tasks: chrony.yml
+  tags: base_chrony
+
+- name: Configure resolved
+  ansible.builtin.import_tasks: resolved.yml
+  tags: base_resolved
+
+- name: Configure auditd
+  ansible.builtin.import_tasks: auditd.yml
+  tags: base_auditd
+
+- name: Configure unattended upgrades
+  ansible.builtin.import_tasks: unattended_upgrades.yml
+  tags: base_unattended_upgrades
+
+- name: Configure postfix
+  ansible.builtin.import_tasks: postfix.yml
+  tags: base_postfix
+
+- name: Configure aide
+  ansible.builtin.import_tasks: aide.yml
+  tags: base_aide
+
+- name: Configure logrotate
+  ansible.builtin.template:
+    src: templates/logrotate.conf.j2
+    dest: /etc/logrotate.conf
+    owner: root
+    group: root
+    mode: "0644"
+  tags: base_logrotate
