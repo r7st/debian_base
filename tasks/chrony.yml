@@ -19,6 +19,7 @@
     name: systemd-timesyncd
     state: stopped
     masked: true
+  ignore_errors: true
 
 - name: Copy chrony config
   ansible.builtin.template:
