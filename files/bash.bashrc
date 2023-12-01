@@ -11,4 +11,11 @@ alias ll="ls -lrtFHAh --color=auto"
 alias rm="rm -i"
 alias cp="cp -i"
 alias mv="mv -i"
+chomp(){ awk '
+{
+  if ($0~/^[ \t]*$/) next
+  else if ($0~/^#/) next
+  split($0,Line,"#"); print Line[1]
+}
+' < $1; }
 true
