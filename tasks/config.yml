@@ -31,3 +31,16 @@
     group: root
     mode: "0644"
   tags: base_logrotate
+
+- name: Configure dotfile defaults
+  ansible.builtin.copy:
+    src: "files/{{ item }}"
+    dest: "/etc/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  with_items:
+    - bash.bashrc
+    - vi.exrc
+    - screenrc
+  tags: base_defaults
