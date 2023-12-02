@@ -3,9 +3,16 @@
 #######################
 
 confdir /etc/chrony/conf.d
+{% if base_ntp_servers is defined %}
 {% for server in base_ntp_servers %}
-pool {{ server }} iburst
+{{ server }}
 {% endfor %}
+{% else %}
+pool 0.pool.ntp.org iburst
+pool 1.pool.ntp.org iburst
+pool 2.pool.ntp.org iburst
+pool 3.pool.ntp.org iburst
+{% endif %}
 sourcedir /run/chrony-dhcp
 sourcedir /etc/chrony/sources.d
 keyfile /etc/chrony/chrony.keys
