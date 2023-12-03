@@ -32,6 +32,15 @@
   ansible.builtin.import_tasks: config.yml
   tags: base_config
 
+- name: Custom scripts
+  ansible.builtin.copy:
+    src: files/chomp
+    dest: /usr/local/bin/chomp
+    owner: root
+    group: root
+    mode: "0755"
+  tags: base_custom_scripts
+
 - name: Enforce apparmpr
   ansible.builtin.command:
     cmd: aa-enforce /etc/apparmor.d/*
