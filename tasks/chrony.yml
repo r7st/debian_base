@@ -1,6 +1,6 @@
 - name: Chrony asserts
   ansible.builtin.assert:
-    that: base_ntp_servers | length > 0
+    that: base_chrony_sources | length > 0
 
 - name: Install chrony
   ansible.builtin.apt:
@@ -27,7 +27,7 @@
     dest: /etc/chrony/chrony.conf
     owner: root
     group: root
-    mode: "0644"
+    mode: "0444"
   notify: Restart chronyd
 
 - name: Start and enable chrony
