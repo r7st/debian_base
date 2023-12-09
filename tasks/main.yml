@@ -34,11 +34,14 @@
 
 - name: Custom scripts
   ansible.builtin.copy:
-    src: files/chomp
-    dest: /usr/local/bin/chomp
+    src: "files/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
     owner: root
     group: root
     mode: "0755"
+  with_items:
+    - chomp
+    - nftl
   tags: base_custom_scripts
 
 - name: Enforce apparmpr
