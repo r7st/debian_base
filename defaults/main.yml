@@ -8,6 +8,13 @@ base_repos:
   - "debian {{ ansible_facts.lsb.codename }}-updates"
   - "debian {{ ansible_facts.lsb.codename }}-backports"
 
+base_resolved_config:
+  servers:
+    - 1.1.1.1
+    - 1.0.0.1
+  dnssec: "no"
+  dnsovertls: "no"
+
 base_chrony_sources:
   - server: 0.pool.ntp.org
     type: pool
@@ -22,8 +29,8 @@ base_chrony_sources:
     type: pool
     options: iburst
 
-base_fstab_tmp: "tmpfs   /tmp         tmpfs   rw,nodev,nosuid,noexec 0 0"
-base_fstab_var_tmp: "tmpfs   /var/tmp         tmpfs   rw,nodev,nosuid,noexec 0 0"
+base_fstab_tmp: "tmpfs /tmp tmpfs rw,nodev,nosuid,noexec 0 0"
+base_fstab_var_tmp: "tmpfs /var/tmp tmpfs rw,nodev,nosuid,noexec 0 0"
 
 base_unattended_upgrades: true
 base_unattended_upgrades_reboot: false

@@ -1,3 +1,4 @@
+---
 - name: Check for /tmp mount
   ansible.builtin.command:
     cmd: egrep "[ \t]\/tmp[ \t]" /etc/fstab
@@ -44,12 +45,12 @@
   - name: Ensure tmpfs entry exists for /var/tmp
     ansible.builtin.lineinfile:
       path: /etc/fstab
-      line: "{{ base_fstab_var_tmp }}" 
+      line: "{{ base_fstab_var_tmp }}"
     register: var_tmp_changed
 
   - name: Removing old /var/tmp entry
     ansible.builtin.lineinfile:
       path: /etc/fstab
-      line: "{{ var_tmp_check.stdout }}" 
+      line: "{{ var_tmp_check.stdout }}"
       state: absent
     when: (var_tmp_changed.changed) and (var_tmp_check.rc == 0)

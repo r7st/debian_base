@@ -1,3 +1,4 @@
+---
 - name: Aide asserts
   ansible.builtin.assert:
     that: base_aide is boolean
@@ -5,49 +6,49 @@
 - name: Install aide
   when: base_aide
   block:
-  - name: Install aide package
-    ansible.builtin.apt:
-      name: aide
-      state: present
-      update_cache: true
+    - name: Install aide package
+      ansible.builtin.apt:
+        name: aide
+        state: present
+        update_cache: true
 
-  - name: Check for db
-    ansible.builtin.stat:
-      path: /var/lib/aide/aide.db
-    register: aide_db
+    - name: Check for db
+      ansible.builtin.stat:
+        path: /var/lib/aide/aide.db
+      register: aide_db
 
-  - name: Initialize aide db
-    ansible.builtin.command:
-      cmd: aideinit -y
-    changed_when: true
-    failed_when:
-      - aideinit_cmd.rc != 0
-      - '"cannot get lock" in aideinit_cmd.stderr'
-    register: aideinit_cmd
-    async: 1800
-    poll: 60
-    when: not aide_db.stat.exists
+    - name: Initialize aide db
+      ansible.builtin.command:
+        cmd: aideinit -y
+      changed_when: true
+      failed_when:
+        - aideinit_cmd.rc != 0
+        - '"cannot get lock" in aideinit_cmd.stderr'
+      register: aideinit_cmd
+      async: 1800
+      poll: 60
+      when: not aide_db.stat.exists
 
-  - name: Aide default copynewdb
-    ansible.builtin.replace:
-      path: /etc/default/aide
-      regexp: '^COPYNEWDB=no'
-      replace: COPYNEWDB=yes
+    - name: Aide default copynewdb
+      ansible.builtin.replace:
+        path: /etc/default/aide
+        regexp: '^COPYNEWDB=no'
+        replace: COPYNEWDB=yes
 
 - name: Remove aide
   when: not base_aide
   block:
-  - name: Purge aide package
-    ansible.builtin.apt:
-      name: aide
-      state: absent
-      purge: true
+    - name: Purge aide package
+      ansible.builtin.apt:
+        name: aide
+        state: absent
+        purge: true
 
-  - name: Remove logs and cron file
-    ansible.builtin.file:
-      path: "{{ item }}"
-      state: absent
-    with_items:
-      - /var/log/aide
-      - /etc/cron.daily/aide
-      - /etc/default/aide
+    - name: Remove logs and cron file
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /var/log/aide
+        - /etc/cron.daily/aide
+        - /etc/default/aide

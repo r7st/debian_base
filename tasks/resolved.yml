@@ -2,7 +2,7 @@
 - name: Install resolved
   ansible.builtin.apt:
     name: systemd-resolved
-    state: latest
+    state: present
     update_cache: true
 
 - name: Start and enable resolved
