@@ -44,7 +44,7 @@
     - nftl
   tags: base_custom_scripts
 
-- name: Enforce apparmpr
+- name: Enforce apparmor
   ansible.builtin.command:
     cmd: aa-enforce /etc/apparmor.d/*
   changed_when: false
