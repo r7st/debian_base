@@ -1,3 +1,4 @@
+---
 - name: General asserts
   ansible.builtin.assert:
     that:
