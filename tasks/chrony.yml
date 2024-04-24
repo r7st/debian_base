@@ -1,8 +1,4 @@
 ---
-- name: Chrony asserts
-  ansible.builtin.assert:
-    that: base_chrony_sources | length > 0
-
 - name: Install chrony
   ansible.builtin.apt:
     name: chrony

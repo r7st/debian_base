@@ -1,0 +1,61 @@
+- name: General asserts
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution == "Debian"
+      - ansible_distribution_major_version in ["11", "12"]
+      - base_aide is boolean
+      - base_auditd is boolean
+      - base_unattended_upgrades is boolean
+      - base_unattended_upgrades_reboot is boolean
+      - base_chrony_sources | length > 0
+      - base_dot is boolean
+      - base_logrotate_frequency in ["daily", "weekly", "monthly", "yearly"]
+      - base_logrotate_keep is number
+      - base_logrotate_compress is boolean
+      - base_logrotate_size is defined
+      - base_repos | length > 0
+    quiet: true
+
+- name: Resolved config asserts
+  ansible.builtin.assert:
+    that:
+      - base_resolved_config.servers | length > 0
+      - base_resolved_config.dnssec in ["yes", "no"]
+      - base_resolved_config.dnsovertls in ["yes", "no"]
+    quiet: true
+
+- name: Resolved config valid servers asserts
+  ansible.builtin.assert:
+    that:
+      - resolved_server is ansible.utils.ipv4
+    quiet: true
+  loop: "{{ base_resolved_config.servers }}"
+  loop_control:
+    loop_var: resolved_server
+    label: "Checking valid IP {{ resolved_server }}"
+
+- name: Chrony sources asserts
+  ansible.builtin.assert:
+    that:
+      - chrony_source.server is defined
+      - chrony_source.type in ["pool", "server"]
+      - chrony_source.options is defined
+    quiet: true
+  loop: "{{ base_chrony_sources }}"
+  loop_control:
+    loop_var: chrony_source
+    label: "Checking chrony conf {{ chrony_source.server }}"
+
+- name: Fstab asserts
+  ansible.builtin.assert:
+    that:
+      - base_fstab_tmp is regex("^.* \/.* .* .* [012] [012]$")
+      - base_fstab_var_tmp is regex("^.* \/.* .* .* [012] [012]$")
+    quiet: true
+
+- name: Auditd log file action assert
+  ansible.builtin.assert:
+    that:
+      - base_auditd_max_log_file_action in ["ignore", "syslog", "suspend", "rotate", "keep_logs"]
+    quiet: true
+  when: base_auditd_max_log_file_action is defined
