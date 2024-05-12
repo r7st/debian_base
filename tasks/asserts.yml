@@ -40,7 +40,8 @@
     that:
       - chrony_source.server is defined
       - chrony_source.type in ["pool", "server"]
-      - chrony_source.options is defined
+      - chrony_source.options is not defined or
+        chrony_source.options | length > 0
     quiet: true
   loop: "{{ base_chrony_sources }}"
   loop_control:

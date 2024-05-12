@@ -1,8 +1,10 @@
+#jinja2: trim_blocks:True, lstrip_blocks:True
 # [ANSIBLE MANAGED]
 
 confdir /etc/chrony/conf.d
 {% for source in base_chrony_sources %}
-{{ source['type'] }} {{ source['server'] }} {{ source['options'] }}
+{{ source.type }} {{ source.server }} {% for option in source.options -%}
+{{ option }}{% if not loop.last %} {% endif %}{% endfor +%}
 {% endfor %}
 sourcedir /run/chrony-dhcp
 sourcedir /etc/chrony/sources.d
