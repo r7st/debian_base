@@ -12,23 +12,35 @@
     update_cache: true
 
 - name: Remove packages
-  ansible.builtin.apt:
-    name: "{{ removed_package }}"
-    state: absent
-  with_items: "{{ base_remove_packages }}"
-  loop_control:
-    loop_var: removed_package
   when:
     - base_remove_packages is defined
     - base_remove_packages | length > 0
+  block:
+    - name: Set_fact _base_remove_packages
+      ansible.builtin.set_fact:
+        _base_remove_packages: "{{ _base_remove_packages | default([]) + [package] }}"
+      loop: "{{ base_remove_packages }}"
+      loop_control:
+        loop_var: package
+
+    - name: Remove packages
+      ansible.builtin.apt:
+        name: "{{ _base_remove_packages }}"
+        state: absent
 
 - name: Install packages
-  ansible.builtin.apt:
-    name: "{{ installed_package }}"
-    state: present
-  with_items: "{{ base_install_packages }}"
-  loop_control:
-    loop_var: installed_package
   when:
     - base_install_packages is defined
     - base_install_packages | length > 0
+  block:
+    - name: Set_fact _base_install_packages
+      ansible.builtin.set_fact:
+        _base_install_packages: "{{ _base_install_packages | default([]) + [package] }}"
+      loop: "{{ base_install_packages }}"
+      loop_control:
+        loop_var: package
+
+    - name: Install packages
+      ansible.builtin.apt:
+        name: "{{ _base_install_packages }}"
+        state: present
